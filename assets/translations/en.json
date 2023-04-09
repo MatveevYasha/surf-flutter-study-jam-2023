@@ -1,0 +1,11 @@
+{
+    "ticket_storage" : "Ticket storage",
+    "nothing_here" : "There's nothing here yet",
+    "waiting_download" : "Waiting for the download to start",
+    "file_ploaded" : "File uploaded",
+    "loading" : "Loading...",
+    "megabytes" : "Mb",
+    "enter_url" : "Enter URL",
+    "enter_correct_url" : "Enter the correct URL",
+    "add" : "Add"
+}

@@ -1,0 +1,11 @@
+{
+    "ticket_storage" : "Хранение билетов",
+    "nothing_here" : "Здесь пока ничего нет",
+    "waiting_download" : "Ожидает начала загрузки",
+    "file_ploaded" : "Файл загружен",
+    "loading" : "Идет загрузка...",
+    "megabytes" : "Мб",
+    "enter_url" : "Введите URL",
+    "enter_correct_url" : "Введите корректный URL",
+    "add" : "Добавить"
+}

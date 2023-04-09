@@ -1,0 +1,43 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:surf_flutter_study_jam_2023/generated/locale_keys.g.dart';
+
+class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
+  const CustomAppBar({
+    super.key,
+    required this.colors,
+  });
+
+  final ColorScheme colors;
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      actions: [
+        IconButton(
+          color: colors.primary,
+          icon: const Icon(
+            Icons.language,
+          ),
+          onPressed: () {
+            if (context.locale == const Locale('ru')) {
+              context.setLocale(const Locale('en'));
+            } else {
+              context.setLocale(const Locale('ru'));
+            }
+          },
+        ),
+      ],
+      backgroundColor: colors.background,
+      title: Align(
+        alignment: Alignment.centerLeft,
+        child: Text(
+          LocaleKeys.ticket_storage.tr(),
+        ),
+      ),
+    );
+  }
+}
