@@ -59,6 +59,8 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
           : ListView.builder(
               itemCount: nameTickets.length,
               itemBuilder: (context, index) {
+                List<String> splited;
+                splited = nameTickets[index].split('/');
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: ListTile(
@@ -67,7 +69,7 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          nameTickets[index],
+                          splited.last,
                           style: TextStyle(color: colors.primary),
                         ),
                         Stack(
