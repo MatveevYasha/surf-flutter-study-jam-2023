@@ -18,6 +18,7 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
   int currentFileSize = 0;
   double fileSize = 0;
   final textFieldController = TextEditingController();
+  List<int> totalWeight = [];
 
   @override
   void dispose() {
@@ -33,7 +34,7 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
         int percentage = ((count / total) * 100).floor();
         setState(() {
 // Здесь логика работы прогресс бара, которую надо бы поменять
-          fileSize = total / 1024;
+          totalWeight.add(total);
           currentFileSize = percentage;
         });
       },
@@ -90,7 +91,7 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
                               ? LocaleKeys.waiting_download.tr()
                               : (currentFileSize == 100)
                                   ? LocaleKeys.file_ploaded.tr()
-                                  : '${LocaleKeys.loading.tr()} ${double.parse((fileSize / 1024).toStringAsFixed(1))} ${LocaleKeys.megabytes.tr()}',
+                                  : '${LocaleKeys.loading.tr()} ${double.parse((totalWeight[index] / (1024 * 1024)).toStringAsFixed(1))} ${LocaleKeys.megabytes.tr()}',
                           style: TextStyle(color: colors.secondary),
                         ),
                       ],

@@ -91,7 +91,7 @@ class _CustomFloatingActionButtonState
                 },
                 child: Text(LocaleKeys.add.tr()),
               ),
-              const SizedBox(height: 15)
+              SizedBox(height: widget.size.height * 0.015)
             ],
           ),
         );
