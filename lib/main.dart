@@ -5,13 +5,14 @@ import 'package:surf_flutter_study_jam_2023/features/ticket_storage/screen/ticke
 import 'package:surf_flutter_study_jam_2023/generated/codegen_loader.g.dart';
 
 void main() async {
+  // Асинхронное выполнение из за локализации
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
   runApp(
     EasyLocalization(
         assetLoader: const CodegenLoader(),
         supportedLocales: const [Locale('en'), Locale('ru')],
-        path: 'assets/translations',
+        path: 'assets/translations', // Путь к папке с переводом
         fallbackLocale: const Locale('ru'),
         child: const MyApp()),
   );

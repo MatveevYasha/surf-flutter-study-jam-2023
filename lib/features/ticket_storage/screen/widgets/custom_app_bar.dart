@@ -23,6 +23,7 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
             Icons.language,
           ),
           onPressed: () {
+            // Для генерации перевода необходимо выполнить команды из файла Readme
             if (context.locale == const Locale('ru')) {
               context.setLocale(const Locale('en'));
             } else {

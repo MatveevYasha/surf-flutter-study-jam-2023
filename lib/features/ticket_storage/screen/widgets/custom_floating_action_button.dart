@@ -21,6 +21,7 @@ class CustomFloatingActionButton extends StatefulWidget {
       _CustomFloatingActionButtonState();
 }
 
+// Сама кнопка
 class _CustomFloatingActionButtonState
     extends State<CustomFloatingActionButton> {
   @override
@@ -36,6 +37,7 @@ class _CustomFloatingActionButtonState
     );
   }
 
+// Модалка
   Future<void> showBottomSheet(BuildContext context) {
     return showModalBottomSheet<void>(
       isScrollControlled: true,

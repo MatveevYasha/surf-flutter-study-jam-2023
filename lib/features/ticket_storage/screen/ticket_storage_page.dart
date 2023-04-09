@@ -25,12 +25,14 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
     super.dispose();
   }
 
+// Метод для получения журнала
   Future<void> _getPdf(String url) async {
     final response = await dio.get(
       url,
       onReceiveProgress: (count, total) {
         int percentage = ((count / total) * 100).floor();
         setState(() {
+// Здесь логика работы прогресс бара, которую надо бы поменять
           fileSize = total / 1024;
           currentFileSize = percentage;
         });
@@ -43,6 +45,7 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
     var colors = Theme.of(context).colorScheme;
     var size = MediaQuery.of(context).size;
     return Scaffold(
+      // Апп бар в отдельном виджете
       appBar: CustomAppBar(colors: colors),
       body: (nameTickets.isEmpty)
           ? Center(
@@ -51,6 +54,7 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             )
+          // Состояние, когда загружен хотя бы один журнал
           : ListView.builder(
               itemCount: nameTickets.length,
               itemBuilder: (context, index) {
@@ -108,6 +112,8 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
                 );
               },
             ),
+
+      // Кнопка и модалка вместе в отдельном файле
       floatingActionButton: CustomFloatingActionButton(
         size: size,
         colors: colors,
