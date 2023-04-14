@@ -34,6 +34,7 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
         int percentage = ((count / total) * 100).floor();
         setState(() {
 // Здесь логика работы прогресс бара, которую надо бы поменять
+          fileSize = total / 1024;
           totalWeight.add(total);
           currentFileSize = percentage;
         });
