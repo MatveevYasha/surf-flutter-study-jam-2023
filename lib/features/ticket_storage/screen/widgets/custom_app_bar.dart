@@ -16,6 +16,7 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      centerTitle: false,
       actions: [
         IconButton(
           color: colors.primary,
@@ -33,11 +34,8 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
         ),
       ],
       backgroundColor: colors.background,
-      title: Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          LocaleKeys.ticket_storage.tr(),
-        ),
+      title: Text(
+        LocaleKeys.ticket_storage.tr(),
       ),
     );
   }

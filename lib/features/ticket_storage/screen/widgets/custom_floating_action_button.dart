@@ -2,6 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:surf_flutter_study_jam_2023/generated/locale_keys.g.dart';
 
+final _formKey = GlobalKey<FormState>();
+
 class CustomFloatingActionButton extends StatefulWidget {
   const CustomFloatingActionButton({
     super.key,
@@ -43,7 +45,6 @@ class _CustomFloatingActionButtonState
       isScrollControlled: true,
       context: context,
       builder: (BuildContext context) {
-        bool isValid = false;
         return Container(
           margin:
               EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
@@ -61,32 +62,40 @@ class _CustomFloatingActionButtonState
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30),
-                child: TextField(
-                  onChanged: (value) {
-                    if (value.contains('.pdf') == true) {
-                      isValid = true;
-                    }
-                  },
-                  controller: widget.textFieldController,
-                  keyboardType: TextInputType.url,
-                  enabled: true,
-                  decoration: InputDecoration(
-                    labelText: LocaleKeys.enter_url.tr(),
-                    errorText:
-                        isValid ? LocaleKeys.enter_correct_url.tr() : null,
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15)),
+                child: Form(
+                  key: _formKey,
+                  child: TextFormField(
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter some text';
+                      }
+                      if (value.contains('.pdf') == false) {
+                        return LocaleKeys.enter_correct_url.tr();
+                      }
+                      return null;
+                    },
+                    controller: widget.textFieldController,
+                    keyboardType: TextInputType.url,
+                    enabled: true,
+                    decoration: InputDecoration(
+                      labelText: LocaleKeys.enter_url.tr(),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15)),
+                    ),
                   ),
                 ),
               ),
               FilledButton(
                 onPressed: () {
-                  if (isValid == true) {
+                  if (_formKey.currentState!.validate()) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Processing Data')),
+                    );
                     setState(() {
                       widget.nameTickets.add(widget.textFieldController.text);
                       widget.textFieldController.clear();
-                      isValid = false;
                     });
+                    Navigator.of(context).pop();
                   }
                 },
                 child: Text(LocaleKeys.add.tr()),
