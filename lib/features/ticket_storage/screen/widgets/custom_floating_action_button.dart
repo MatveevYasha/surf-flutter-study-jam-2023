@@ -1,5 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:surf_flutter_study_jam_2023/features/ticket_storage/bloc/ticket_bloc.dart';
 import 'package:surf_flutter_study_jam_2023/generated/locale_keys.g.dart';
 
 final _formKey = GlobalKey<FormState>();
@@ -89,12 +91,14 @@ class _CustomFloatingActionButtonState
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Processing Data')),
+                      const SnackBar(content: Text('Журнал успешно добавлен')),
                     );
-                    setState(() {
-                      widget.nameTickets.add(widget.textFieldController.text);
-                      widget.textFieldController.clear();
-                    });
+                    context.read<TicketBloc>().add(
+                        AddTicketEvent(url: widget.textFieldController.text));
+                    // setState(() {
+                    //   widget.nameTickets.add(widget.textFieldController.text);
+                    widget.textFieldController.clear();
+                    // });
                     Navigator.of(context).pop();
                   }
                 },
