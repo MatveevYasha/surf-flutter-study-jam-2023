@@ -19,19 +19,24 @@ class TicketBloc extends Bloc<TicketEvent, TicketState> {
 
 // здесь сделать стрим
   FutureOr<void> _loading(LoadingTicketEvent event, emit) async {
-    //написать тут определеный стейт
-    int fileSize = 0;
-    int currentFileSize = 0;
+    int totall = 0;
+    print('1');
     final response = await dio.get(
       event.url,
       onReceiveProgress: (count, total) {
-        fileSize = total;
-        currentFileSize = count;
-        // int percentage = ((count / total) * 100).floor();
+        print('2');
+        totall = total;
+        double value = (count / total);
+        emit(LoadingTicketState(
+            currentFileSize: count.toDouble(),
+            fileSize: total,
+            index: event.index));
       },
     );
-    print(currentFileSize);
+    print('3');
     emit(LoadingTicketState(
-        currentFileSize: currentFileSize, fileSize: fileSize));
+        currentFileSize: totall.toDouble(),
+        fileSize: totall,
+        index: event.index));
   }
 }

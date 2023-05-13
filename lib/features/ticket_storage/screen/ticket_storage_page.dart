@@ -7,7 +7,6 @@ import 'package:surf_flutter_study_jam_2023/features/ticket_storage/bloc/ticket_
 import 'package:surf_flutter_study_jam_2023/features/ticket_storage/screen/widgets/custom_app_bar.dart';
 import 'package:surf_flutter_study_jam_2023/features/ticket_storage/screen/widgets/custom_floating_action_button.dart';
 import 'package:surf_flutter_study_jam_2023/generated/locale_keys.g.dart';
-import 'package:surf_flutter_study_jam_2023/main.dart';
 
 /// Экран “Хранения билетов”.
 class TicketStoragePage extends StatefulWidget {
@@ -22,11 +21,11 @@ class TicketStoragePage extends StatefulWidget {
 
 class _TicketStoragePageState extends State<TicketStoragePage> {
   List<String> nameTickets = [];
-  int currentFileSize = 0;
-  int fileSize = 0;
+  List<double> currentFileSize = [];
+  List<int> fileSize = [];
   final textFieldController = TextEditingController();
-  List<int> totalWeight = [];
-  final StreamController<int> streamController = StreamController<int>();
+  // List<int> totalWeight = [];
+  // final StreamController<int> streamController = StreamController<int>();
 
   // @override
   // void initState() {
@@ -37,7 +36,7 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
   @override
   void dispose() {
     textFieldController.dispose();
-    streamController.close();
+    // streamController.close();
     super.dispose();
   }
 
@@ -70,16 +69,20 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
     return BlocConsumer<TicketBloc, TicketState>(
       listener: (context, state) {
         if (state is LoadingTicketState) {
-          print(state.currentFileSize);
-          setState(() {
-            fileSize = state.fileSize;
-            currentFileSize = state.currentFileSize;
-          });
+          // print('Size: ${state.currentFileSize}');
+          // setState(() {
+          print('Cur in: ${currentFileSize[state.index]}');
+          print('state: ${state.currentFileSize}');
+          currentFileSize[state.index] = state.currentFileSize;
+          fileSize[state.index] = state.fileSize;
+          // });
         }
       },
       builder: (context, state) {
         if (state is AddedTicketState) {
           nameTickets.add(state.url);
+          currentFileSize.add(0);
+          fileSize.add(0);
         }
         return Scaffold(
           // Апп бар в отдельном виджете
@@ -107,6 +110,11 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
                             Text(
                               splited.last,
                               style: TextStyle(color: colors.primary),
+                            ),
+                            LinearProgressIndicator(
+                              value: (currentFileSize[index] == 0)
+                                  ? 0
+                                  : (currentFileSize[index] / fileSize[index]),
                             ),
                             // Stack(
                             //   children: [
@@ -142,8 +150,9 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
                             //         }),
                             //   ],
                             // ),
-                            Text(
-                                'Загружается ${(currentFileSize / (1024 * 1024)).toStringAsFixed(2)} из ${(fileSize / (1024 * 1024)).toStringAsFixed(2)} Mb'),
+                            Text((currentFileSize.isEmpty)
+                                ? 'Ожидает загрузки'
+                                : 'Загружается ${(currentFileSize[index] / (1024 * 1024)).toStringAsFixed(2)} из ${(fileSize[index] / (1024 * 1024)).toStringAsFixed(2)} Mb'),
 
                             // Text(
                             //   (currentFileSize == 0)
@@ -157,18 +166,17 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
                         ),
                         trailing: IconButton(
                           color: colors.primary,
-                          icon: (currentFileSize == 0)
+                          icon: (currentFileSize.isEmpty) ||
+                                  (currentFileSize[index] == 0)
                               ? const Icon(Icons.cloud_download_outlined)
-                              : (currentFileSize == fileSize)
+                              : (currentFileSize[index] == fileSize[index])
                                   ? const Icon(Icons.cloud_download_rounded)
                                   : const Icon(
                                       Icons.pause_circle_outline_outlined),
                           onPressed: () {
-                            setState(() {
-                              // _getPdf(nameTickets[index]);
-                              context.read<TicketBloc>().add(LoadingTicketEvent(
-                                  url: nameTickets[index], index: index));
-                            });
+                            // _getPdf(nameTickets[index]);
+                            context.read<TicketBloc>().add(LoadingTicketEvent(
+                                url: nameTickets[index], index: index));
                           },
                         ),
                       ),
