@@ -4,5 +4,3 @@
 
 # Ссылки на демонстрацию работы/скриншоты
 
-Ссылка на скриншоты в гугл док:
-https://docs.google.com/document/d/1tYu0J6xCQYogPQovaqjymc4tUsuApxlD2L7AODz-1SY/edit?usp=sharing

@@ -13,30 +13,26 @@ class TicketBloc extends Bloc<TicketEvent, TicketState> {
   }
 
   FutureOr<void> _addTicket(AddTicketEvent event, emit) async {
-    // final response = await dio.get(event.url);
     emit(AddedTicketState(url: event.url));
   }
 
 // здесь сделать стрим
   FutureOr<void> _loading(LoadingTicketEvent event, emit) async {
-    int totall = 0;
-    print('1');
+    int fileSize = 0;
+    // ignore: unused_local_variable
     final response = await dio.get(
       event.url,
       onReceiveProgress: (count, total) {
-        print('2');
-        totall = total;
-        double value = (count / total);
+        fileSize = total;
         emit(LoadingTicketState(
             currentFileSize: count.toDouble(),
             fileSize: total,
             index: event.index));
       },
     );
-    print('3');
     emit(LoadingTicketState(
-        currentFileSize: totall.toDouble(),
-        fileSize: totall,
+        currentFileSize: fileSize.toDouble(),
+        fileSize: fileSize,
         index: event.index));
   }
 }
