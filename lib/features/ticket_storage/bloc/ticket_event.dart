@@ -19,3 +19,11 @@ class LoadingTicketEvent extends TicketEvent {
     required this.index,
   });
 }
+
+class DeleteTicketEvent extends TicketEvent {
+  final int index;
+
+  DeleteTicketEvent({
+    required this.index,
+  });
+}

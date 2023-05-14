@@ -23,3 +23,9 @@ class LoadingTicketState extends TicketState {
     required this.index,
   });
 }
+
+class DeleteTicketState extends TicketState {
+  final int index;
+
+  DeleteTicketState({required this.index});
+}

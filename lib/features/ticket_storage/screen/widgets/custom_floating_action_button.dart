@@ -67,6 +67,7 @@ class _CustomFloatingActionButtonState
                 child: Form(
                   key: _formKey,
                   child: TextFormField(
+                    // initialValue: 'fsdf',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter some text';
@@ -95,10 +96,7 @@ class _CustomFloatingActionButtonState
                     );
                     context.read<TicketBloc>().add(
                         AddTicketEvent(url: widget.textFieldController.text));
-                    // setState(() {
-                    //   widget.nameTickets.add(widget.textFieldController.text);
                     widget.textFieldController.clear();
-                    // });
                     Navigator.of(context).pop();
                   }
                 },

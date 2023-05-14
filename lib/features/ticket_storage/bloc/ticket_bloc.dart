@@ -10,6 +10,7 @@ class TicketBloc extends Bloc<TicketEvent, TicketState> {
   TicketBloc() : super(TicketInitial()) {
     on<AddTicketEvent>(_addTicket);
     on<LoadingTicketEvent>(_loading);
+    on<DeleteTicketEvent>(_delete);
   }
 
   FutureOr<void> _addTicket(AddTicketEvent event, emit) async {
@@ -34,5 +35,9 @@ class TicketBloc extends Bloc<TicketEvent, TicketState> {
         currentFileSize: fileSize.toDouble(),
         fileSize: fileSize,
         index: event.index));
+  }
+
+  FutureOr<void> _delete(DeleteTicketEvent event, emit) async {
+    emit(DeleteTicketState(index: event.index));
   }
 }
