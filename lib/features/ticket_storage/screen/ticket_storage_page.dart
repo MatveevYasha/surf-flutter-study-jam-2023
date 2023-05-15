@@ -6,6 +6,7 @@ import 'package:surf_flutter_study_jam_2023/features/ticket_storage/bloc/ticket_
 import 'package:surf_flutter_study_jam_2023/features/ticket_storage/screen/widgets/custom_app_bar.dart';
 // import 'package:surf_flutter_study_jam_2023/features/ticket_storage/screen/widgets/custom_floating_action_button.dart';
 import 'package:surf_flutter_study_jam_2023/generated/locale_keys.g.dart';
+import 'package:path_provider/path_provider.dart' as pathProvider;
 
 final _formKey = GlobalKey<FormState>();
 

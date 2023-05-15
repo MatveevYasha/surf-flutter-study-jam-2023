@@ -2,12 +2,18 @@ import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:surf_flutter_study_jam_2023/features/ticket_storage/bloc/ticket_bloc.dart';
+import 'package:surf_flutter_study_jam_2023/features/ticket_storage/data/boxes/boxes.dart';
+import 'package:surf_flutter_study_jam_2023/features/ticket_storage/data/models/ticket.dart';
 import 'package:surf_flutter_study_jam_2023/features/ticket_storage/screen/ticket_storage_page.dart';
 import 'package:surf_flutter_study_jam_2023/generated/codegen_loader.g.dart';
 
 void main() async {
-  // Асинхронное выполнение из за локализации
+  // Асинхронное выполнение из за локализации и Hive
+  await Hive.initFlutter();
+  Hive.registerAdapter(TicketAdapter());
+  ticketBox = await Hive.openBox<Ticket>('ticketBox');
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
   runApp(
