@@ -24,15 +24,9 @@ class _PDFScreenState extends State<PDFScreen> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("PDF Viewer"),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.share),
-            onPressed: () {},
-          ),
-        ],
+        title: const Text("PDF Viewer"),
       ),
-      backgroundColor: Colors.red,
+      backgroundColor: Colors.white,
       body: Stack(
         children: <Widget>[
           PDFView(
@@ -44,8 +38,7 @@ class _PDFScreenState extends State<PDFScreen> with WidgetsBindingObserver {
             pageSnap: true,
             defaultPage: currentPage!,
             fitPolicy: FitPolicy.BOTH,
-            preventLinkNavigation:
-                false, // if set to true the link is handled in flutter
+            preventLinkNavigation: false,
             onRender: (_pages) {
               setState(() {
                 pages = _pages;
@@ -56,22 +49,17 @@ class _PDFScreenState extends State<PDFScreen> with WidgetsBindingObserver {
               setState(() {
                 errorMessage = error.toString();
               });
-              print(error.toString());
             },
             onPageError: (page, error) {
               setState(() {
                 errorMessage = '$page: ${error.toString()}';
               });
-              print('$page: ${error.toString()}');
             },
             onViewCreated: (PDFViewController pdfViewController) {
               _controller.complete(pdfViewController);
             },
-            onLinkHandler: (String? uri) {
-              print('goto uri: $uri');
-            },
+            onLinkHandler: (String? uri) {},
             onPageChanged: (int? page, int? total) {
-              print('page change: $page/$total');
               setState(() {
                 currentPage = page;
               });
@@ -79,30 +67,16 @@ class _PDFScreenState extends State<PDFScreen> with WidgetsBindingObserver {
           ),
           errorMessage.isEmpty
               ? !isReady
-                  ? Center(
+                  ? const Center(
                       child: CircularProgressIndicator(),
                     )
                   : Container()
               : Center(
                   child: Text(errorMessage),
-                )
+                ),
         ],
       ),
-      floatingActionButton: FutureBuilder<PDFViewController>(
-        future: _controller.future,
-        builder: (context, AsyncSnapshot<PDFViewController> snapshot) {
-          if (snapshot.hasData) {
-            return FloatingActionButton.extended(
-              label: Text("Go to ${pages! ~/ 2}"),
-              onPressed: () async {
-                await snapshot.data!.setPage(pages! ~/ 2);
-              },
-            );
-          }
-
-          return Container();
-        },
-      ),
+      floatingActionButton: Text('Стр. ${currentPage! + 1} из $pages'),
     );
   }
 }

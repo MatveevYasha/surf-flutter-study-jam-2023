@@ -36,37 +36,42 @@ class TicketBloc extends Bloc<TicketEvent, TicketState> {
       },
     );
 
-    Completer<File> completer = Completer();
-    print("Start download file from internet!");
+    // Completer<File> completer = Completer();
+    // print("Start download file from internet!");
 
-    // "https://berlin2017.droidcon.cod.newthinking.net/sites/global.droidcon.cod.newthinking.net/files/media/documents/Flutter%20-%2060FPS%20UI%20of%20the%20future%20%20-%20DroidconDE%2017.pdf";
-    // final url = "https://pdfkit.org/docs/guide.pdf";
-    final url = event.url;
-    final filename = url.substring(url.lastIndexOf("/") + 1);
-    var request = await HttpClient().getUrl(Uri.parse(url));
-    var responseOne = await request.close();
-    var bytes = await consolidateHttpClientResponseBytes(responseOne);
-    var dir = await getApplicationDocumentsDirectory();
-    print("Download files");
-    print("${dir.path}/$filename");
-    File file = File("${dir.path}/$filename");
-
-    await file.writeAsBytes(bytes, flush: true);
-    completer.complete(file);
-
-    Future<File> str = completer.future;
-
-    // var dir = await getTemporaryDirectory();
-    // File file = File('${dir.path}/data.pdf');
-    // await file.writeAsString(response.data, flush: true);
-    // print(file);
-    // String str = file.path;
-
+    // // "https://berlin2017.droidcon.cod.newthinking.net/sites/global.droidcon.cod.newthinking.net/files/media/documents/Flutter%20-%2060FPS%20UI%20of%20the%20future%20%20-%20DroidconDE%2017.pdf";
+    // // final url = "https://pdfkit.org/docs/guide.pdf";
+    // final url = event.url;
+    // final filename = url.substring(url.lastIndexOf("/") + 1);
+    // var request = await HttpClient().getUrl(Uri.parse(url));
+    // var responseOne = await request.close();
+    // var bytes = await consolidateHttpClientResponseBytes(responseOne);
+    // var dir = await getApplicationDocumentsDirectory();
+    // print("Download files");
+    // print("${dir.path}/$filename");
+    // File file = File("${dir.path}/$filename");
+    // print('1');
+    // await file.writeAsBytes(bytes, flush: true);
+    // print('2');
+    // completer.complete(file);
+    // print('3');
+    // // Future<File> str = completer.future;
+    // completer.future.then((f) {
+    //   string = f.path;
+    // });
+    // print('4');
+    // print(string);
+    // // var dir = await getTemporaryDirectory();
+    // // File file = File('${dir.path}/data.pdf');
+    // // await file.writeAsString(response.data, flush: true);
+    // // print(file);
+    // // String str = file.path;
+    // print('5');
     emit(LoadingTicketState(
-        currentFileSize: fileSize.toDouble(),
-        fileSize: fileSize,
-        index: event.index,
-        path: str));
+      currentFileSize: fileSize.toDouble(),
+      fileSize: fileSize,
+      index: event.index,
+    ));
   }
 
   FutureOr<void> _delete(DeleteTicketEvent event, emit) async {

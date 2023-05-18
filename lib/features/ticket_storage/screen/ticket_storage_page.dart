@@ -1,15 +1,17 @@
-import 'dart:js_interop';
+import 'dart:async';
+import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:surf_flutter_study_jam_2023/features/ticket_storage/bloc/ticket_bloc.dart';
 import 'package:surf_flutter_study_jam_2023/features/ticket_storage/screen/pdf_detail_screen/pdf_screen.dart';
 import 'package:surf_flutter_study_jam_2023/features/ticket_storage/screen/widgets/custom_app_bar.dart';
-// import 'package:surf_flutter_study_jam_2023/features/ticket_storage/screen/widgets/custom_floating_action_button.dart';
 import 'package:surf_flutter_study_jam_2023/generated/locale_keys.g.dart';
-import 'package:path_provider/path_provider.dart' as pathProvider;
+// import 'package:path_provider/path_provider.dart' as pathProvider;
 
 final _formKey = GlobalKey<FormState>();
 
@@ -29,6 +31,8 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
   List<double> currentFileSize = [];
   List<String> localFile = [];
   List<int> fileSize = [];
+  // final String urlOne =
+  //     "https://journal-free.ru/download/dachnye-sekrety-11-noiabr-2019.pdf";
   final textFieldController = TextEditingController();
   final scrollController = ScrollController();
 
@@ -44,12 +48,31 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
     ClipboardData? clipboardData =
         await Clipboard.getData(Clipboard.kTextPlain);
 // выполнить проверку на отсутсвующее значение ??
-    if (clipboardData.isNull) {
+    if (clipboardData?.text == null) {
       textFieldController.text = '';
+    } else {
+      if (clipboardData!.text!.contains('.pdf')) {
+        textFieldController.text = clipboardData.text!;
+      }
     }
-    if (clipboardData!.text!.contains('.pdf')) {
-      textFieldController.text = clipboardData.text!;
+  }
+
+// Загрузка файла PDF
+  Future<File> createFileOfPdfUrl(String url) async {
+    Completer<File> completer = Completer();
+    try {
+      final filename = url.substring(url.lastIndexOf("/") + 1);
+      var request = await HttpClient().getUrl(Uri.parse(url));
+      var response = await request.close();
+      var bytes = await consolidateHttpClientResponseBytes(response);
+      var dir = await getApplicationDocumentsDirectory();
+      File file = File("${dir.path}/$filename");
+      await file.writeAsBytes(bytes, flush: true);
+      completer.complete(file);
+    } catch (e) {
+      throw Exception('Error parsing asset file!');
     }
+    return completer.future;
   }
 
   @override
@@ -60,7 +83,7 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
         if (state is LoadingTicketState) {
           currentFileSize[state.index] = state.currentFileSize;
           fileSize[state.index] = state.fileSize;
-          state.path!.then((value) => localFile[state.index] = value.path);
+          // localFile[state.index] = state.path;
         }
       },
       builder: (context, state) {
@@ -68,6 +91,7 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
           nameTickets.add(state.url);
           currentFileSize.add(0);
           fileSize.add(0);
+          localFile.add('');
         }
         if (state is DeleteTicketState) {
           nameTickets.removeAt(state.index);
@@ -117,13 +141,23 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
                           ),
                           child: ListTile(
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => PDFScreen(
-                                          path: localFile[index],
-                                        )),
-                              );
+                              if (localFile[index] == '') {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content:
+                                        Text('Сначала нужно загрузить журнал'),
+                                    duration: Duration(seconds: 1),
+                                  ),
+                                );
+                              } else {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => PDFScreen(
+                                            path: localFile[index],
+                                          )),
+                                );
+                              }
                             },
                             leading: const Icon(Icons.airplane_ticket_outlined),
                             title: Column(
@@ -157,6 +191,12 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
                                       : const Icon(
                                           Icons.pause_circle_outline_outlined),
                               onPressed: () {
+                                createFileOfPdfUrl(nameTickets[index])
+                                    .then((f) {
+                                  setState(() {
+                                    localFile[index] = f.path;
+                                  });
+                                });
                                 context.read<TicketBloc>().add(
                                     LoadingTicketEvent(
                                         url: nameTickets[index], index: index));
@@ -237,7 +277,10 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Журнал успешно добавлен')),
+                      const SnackBar(
+                        duration: Duration(milliseconds: 750),
+                        content: Text('Журнал успешно добавлен'),
+                      ),
                     );
                     context
                         .read<TicketBloc>()
