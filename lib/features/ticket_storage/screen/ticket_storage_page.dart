@@ -1,8 +1,11 @@
+import 'dart:js_interop';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:surf_flutter_study_jam_2023/features/ticket_storage/bloc/ticket_bloc.dart';
+import 'package:surf_flutter_study_jam_2023/features/ticket_storage/screen/pdf_detail_screen/pdf_screen.dart';
 import 'package:surf_flutter_study_jam_2023/features/ticket_storage/screen/widgets/custom_app_bar.dart';
 // import 'package:surf_flutter_study_jam_2023/features/ticket_storage/screen/widgets/custom_floating_action_button.dart';
 import 'package:surf_flutter_study_jam_2023/generated/locale_keys.g.dart';
@@ -24,6 +27,7 @@ class TicketStoragePage extends StatefulWidget {
 class _TicketStoragePageState extends State<TicketStoragePage> {
   List<String> nameTickets = [];
   List<double> currentFileSize = [];
+  List<String> localFile = [];
   List<int> fileSize = [];
   final textFieldController = TextEditingController();
   final scrollController = ScrollController();
@@ -39,6 +43,10 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
   Future<void> _getTextBuffer() async {
     ClipboardData? clipboardData =
         await Clipboard.getData(Clipboard.kTextPlain);
+// выполнить проверку на отсутсвующее значение ??
+    if (clipboardData.isNull) {
+      textFieldController.text = '';
+    }
     if (clipboardData!.text!.contains('.pdf')) {
       textFieldController.text = clipboardData.text!;
     }
@@ -52,6 +60,7 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
         if (state is LoadingTicketState) {
           currentFileSize[state.index] = state.currentFileSize;
           fileSize[state.index] = state.fileSize;
+          state.path!.then((value) => localFile[state.index] = value.path);
         }
       },
       builder: (context, state) {
@@ -107,6 +116,15 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
                             ),
                           ),
                           child: ListTile(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => PDFScreen(
+                                          path: localFile[index],
+                                        )),
+                              );
+                            },
                             leading: const Icon(Icons.airplane_ticket_outlined),
                             title: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -150,7 +168,8 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
                     },
                   ),
                 ),
-          // Кнопка и модалка вместе в отдельном файле
+          // Не забыть про рефакторинг
+          // еще одна кнопка, чтобы посмотреть хранилище??
           floatingActionButton: FloatingActionButton.extended(
             onPressed: () {
               _getTextBuffer();

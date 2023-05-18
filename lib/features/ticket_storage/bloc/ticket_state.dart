@@ -16,11 +16,13 @@ class LoadingTicketState extends TicketState {
   final int fileSize;
   final double currentFileSize;
   final int index;
+  final Future<File>? path;
 
   LoadingTicketState({
     required this.fileSize,
     required this.currentFileSize,
     required this.index,
+    this.path,
   });
 }
 
