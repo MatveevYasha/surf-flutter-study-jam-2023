@@ -31,8 +31,6 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
   List<double> currentFileSize = [];
   List<String> localFile = [];
   List<int> fileSize = [];
-  // final String urlOne =
-  //     "https://journal-free.ru/download/dachnye-sekrety-11-noiabr-2019.pdf";
   final textFieldController = TextEditingController();
   final scrollController = ScrollController();
 
@@ -49,7 +47,8 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
         await Clipboard.getData(Clipboard.kTextPlain);
 // выполнить проверку на отсутсвующее значение ??
     if (clipboardData?.text == null) {
-      textFieldController.text = '';
+      textFieldController.text =
+          ''; // попробовать это убрать или сделать ретурн
     } else {
       if (clipboardData!.text!.contains('.pdf')) {
         textFieldController.text = clipboardData.text!;
