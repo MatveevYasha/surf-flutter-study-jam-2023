@@ -3,9 +3,14 @@
     "nothing_here" : "Здесь пока ничего нет",
     "waiting_download" : "Ожидает начала загрузки",
     "file_ploaded" : "Файл загружен",
-    "loading" : "Идет загрузка...",
+    "loading" : "Загружается",
     "megabytes" : "Мб",
     "enter_url" : "Введите URL",
     "enter_correct_url" : "Введите корректный URL",
-    "add" : "Добавить"
+    "add" : "Добавить",
+    "need_to_download" : "Сначала нужно загрузить журнал",
+    "from" : "из",
+    "magazine_added_successfully" : "Журнал успешно добавлен",
+    "page" : "Стр.",
+    "padf_viewer" : "Просмотр PDF"
 }

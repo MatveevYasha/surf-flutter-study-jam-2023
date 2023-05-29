@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:async';
 import 'dart:io';
 
@@ -7,13 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
+
 import 'package:surf_flutter_study_jam_2023/features/ticket_storage/bloc/ticket_bloc.dart';
 import 'package:surf_flutter_study_jam_2023/features/ticket_storage/screen/pdf_detail_screen/pdf_screen.dart';
 import 'package:surf_flutter_study_jam_2023/features/ticket_storage/screen/widgets/custom_app_bar.dart';
+import 'package:surf_flutter_study_jam_2023/features/ticket_storage/screen/widgets/custom_modal_bottom_sheet.dart';
+import 'package:surf_flutter_study_jam_2023/features/ticket_storage/screen/widgets/ticket_card.dart';
 import 'package:surf_flutter_study_jam_2023/generated/locale_keys.g.dart';
-// import 'package:path_provider/path_provider.dart' as pathProvider;
-
-final _formKey = GlobalKey<FormState>();
 
 /// Экран “Хранения билетов”.
 class TicketStoragePage extends StatefulWidget {
@@ -23,8 +24,8 @@ class TicketStoragePage extends StatefulWidget {
   State<TicketStoragePage> createState() => _TicketStoragePageState();
 }
 
+// Файл pdf для примера
 // https://journal-free.ru/download/dachnye-sekrety-11-noiabr-2019.pdf
-// https://journal-free.ru/download/za-rulem-12-dekabr-2019-rossiia.pdf
 
 class _TicketStoragePageState extends State<TicketStoragePage> {
   List<String> nameTickets = [];
@@ -45,10 +46,8 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
   Future<void> _getTextBuffer() async {
     ClipboardData? clipboardData =
         await Clipboard.getData(Clipboard.kTextPlain);
-// выполнить проверку на отсутсвующее значение ??
     if (clipboardData?.text == null) {
-      textFieldController.text =
-          ''; // попробовать это убрать или сделать ретурн
+      textFieldController.text = '';
     } else {
       if (clipboardData!.text!.contains('.pdf')) {
         textFieldController.text = clipboardData.text!;
@@ -82,7 +81,6 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
         if (state is LoadingTicketState) {
           currentFileSize[state.index] = state.currentFileSize;
           fileSize[state.index] = state.fileSize;
-          // localFile[state.index] = state.path;
         }
       },
       builder: (context, state) {
@@ -101,6 +99,7 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
           // Апп бар в отдельном виджете
           appBar: CustomAppBar(colors: colors),
           body: (nameTickets.isEmpty)
+              // Состояние, когда ни загружен ни один журнал
               ? Center(
                   child: Text(
                     LocaleKeys.nothing_here.tr(),
@@ -119,6 +118,7 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
                       splited = nameTickets[index].split('/');
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10),
+                        // Удаление тикета
                         child: Dismissible(
                           key: UniqueKey(),
                           onDismissed: (direction) {
@@ -138,14 +138,16 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
                               ),
                             ),
                           ),
-                          child: ListTile(
-                            onTap: () {
+                          // Карточка журнала
+                          child: TicketCard(
+                            // Если нажать на описание журанала
+                            centerTab: () {
                               if (localFile[index] == '') {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
+                                  SnackBar(
                                     content:
-                                        Text('Сначала нужно загрузить журнал'),
-                                    duration: Duration(seconds: 1),
+                                        Text(LocaleKeys.need_to_download.tr()),
+                                    duration: const Duration(seconds: 1),
                                   ),
                                 );
                               } else {
@@ -158,57 +160,27 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
                                 );
                               }
                             },
-                            leading: const Icon(Icons.airplane_ticket_outlined),
-                            title: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  splited.last,
-                                  style: TextStyle(color: colors.primary),
-                                ),
-                                LinearProgressIndicator(
-                                  value: (currentFileSize[index] == 0)
-                                      ? 0
-                                      : (currentFileSize[index] /
-                                          fileSize[index]),
-                                ),
-                                Text((currentFileSize[index] == 0)
-                                    ? 'Ожидает загрузки'
-                                    : (currentFileSize[index] ==
-                                            fileSize[index])
-                                        ? 'Файл загружен'
-                                        : 'Загружается ${(currentFileSize[index] / (1024 * 1024)).toStringAsFixed(2)} из ${(fileSize[index] / (1024 * 1024)).toStringAsFixed(2)} Mb'),
-                              ],
-                            ),
-                            // сделать здесь переключение из нового дарт 3
-                            trailing: IconButton(
-                              color: colors.primary,
-                              icon: (currentFileSize[index] == 0)
-                                  ? const Icon(Icons.cloud_download_outlined)
-                                  : (currentFileSize[index] == fileSize[index])
-                                      ? const Icon(Icons.cloud_download_rounded)
-                                      : const Icon(
-                                          Icons.pause_circle_outline_outlined),
-                              onPressed: () {
-                                createFileOfPdfUrl(nameTickets[index])
-                                    .then((f) {
-                                  setState(() {
-                                    localFile[index] = f.path;
-                                  });
+                            // Если нажать на загрузку
+                            endTab: () {
+                              createFileOfPdfUrl(nameTickets[index]).then((f) {
+                                setState(() {
+                                  localFile[index] = f.path;
                                 });
-                                context.read<TicketBloc>().add(
-                                    LoadingTicketEvent(
-                                        url: nameTickets[index], index: index));
-                              },
-                            ),
+                              });
+                              context.read<TicketBloc>().add(LoadingTicketEvent(
+                                  url: nameTickets[index], index: index));
+                            },
+                            splited: splited,
+                            colors: colors,
+                            currentFileSize: currentFileSize,
+                            fileSize: fileSize,
+                            index: index,
                           ),
                         ),
                       );
                     },
                   ),
                 ),
-          // Не забыть про рефакторинг
-          // еще одна кнопка, чтобы посмотреть хранилище??
           floatingActionButton: FloatingActionButton.extended(
             onPressed: () {
               _getTextBuffer();
@@ -224,6 +196,7 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
     );
   }
 
+// Модалка
   Future<void> showBottomSheet(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     var colors = Theme.of(context).colorScheme;
@@ -231,69 +204,10 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
       isScrollControlled: true,
       context: context,
       builder: (BuildContext context) {
-        return Container(
-          margin:
-              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-          height: size.height * 0.25,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Container(
-                height: size.height * 0.005,
-                width: size.width * 0.1,
-                decoration: BoxDecoration(
-                  color: colors.secondary,
-                  borderRadius: BorderRadius.circular(15),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30),
-                child: Form(
-                  key: _formKey,
-                  child: TextFormField(
-                    // initialValue: 'fsdf',
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
-                      }
-                      if (value.contains('.pdf') == false) {
-                        return LocaleKeys.enter_correct_url.tr();
-                      }
-                      return null;
-                    },
-                    controller: textFieldController,
-                    keyboardType: TextInputType.url,
-                    enabled: true,
-                    decoration: InputDecoration(
-                      labelText: LocaleKeys.enter_url.tr(),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15)),
-                    ),
-                  ),
-                ),
-              ),
-              FilledButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        duration: Duration(milliseconds: 750),
-                        content: Text('Журнал успешно добавлен'),
-                      ),
-                    );
-                    context
-                        .read<TicketBloc>()
-                        .add(AddTicketEvent(url: textFieldController.text));
-                    textFieldController.clear();
-                    Navigator.of(context).pop();
-                  }
-                },
-                child: Text(LocaleKeys.add.tr()),
-              ),
-              SizedBox(height: size.height * 0.015)
-            ],
-          ),
-        );
+        return CustomModalBottomSheet(
+            size: size,
+            colors: colors,
+            textFieldController: textFieldController);
       },
     );
   }

@@ -7,5 +7,10 @@
     "megabytes" : "Mb",
     "enter_url" : "Enter URL",
     "enter_correct_url" : "Enter the correct URL",
-    "add" : "Add"
+    "add" : "Add",
+    "need_to_download" : "First you need to download the magazine",
+    "from" : "from",
+    "magazine_added_successfully" : "Magazine added successfully",
+    "page" : "Page",
+    "padf_viewer" : "PDF Viewer"
 }

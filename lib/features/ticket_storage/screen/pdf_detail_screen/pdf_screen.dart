@@ -1,8 +1,10 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:surf_flutter_study_jam_2023/generated/locale_keys.g.dart';
 
 class PDFScreen extends StatefulWidget {
   final String? path;
@@ -24,7 +26,7 @@ class _PDFScreenState extends State<PDFScreen> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("PDF Viewer"),
+        title: Text(LocaleKeys.padf_viewer.tr()),
       ),
       backgroundColor: Colors.white,
       body: Stack(
@@ -76,7 +78,8 @@ class _PDFScreenState extends State<PDFScreen> with WidgetsBindingObserver {
                 ),
         ],
       ),
-      floatingActionButton: Text('Стр. ${currentPage! + 1} из $pages'),
+      floatingActionButton: Text(
+          '${LocaleKeys.page.tr()} ${currentPage! + 1} ${LocaleKeys.from.tr()} $pages'),
     );
   }
 }
