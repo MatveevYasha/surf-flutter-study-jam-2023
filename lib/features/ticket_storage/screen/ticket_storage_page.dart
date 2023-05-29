@@ -26,6 +26,7 @@ class TicketStoragePage extends StatefulWidget {
 
 // Файл pdf для примера
 // https://journal-free.ru/download/dachnye-sekrety-11-noiabr-2019.pdf
+// https://journal-free.ru/download/aif-zdorove-20-oktiabr-noiabr-2019.pdf
 
 class _TicketStoragePageState extends State<TicketStoragePage> {
   List<String> nameTickets = [];
